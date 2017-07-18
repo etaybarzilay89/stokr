@@ -1,0 +1,134 @@
+html {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 100%;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-weight: 300;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  background-color: #F0F4F7;
+}
+
+.list-reset {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.root {
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+  width: 80vw;
+  height: 100vh;
+  margin-top: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.root .app-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 1%;
+}
+
+.stokr-logo {
+  width: 166px;
+  height: 46px;
+  font-family: LucidaGrande, Serif;
+  font-size: 39px;
+  font-weight: bold;
+  color: #41bf15;
+}
+.root .app-header ul {
+  display: flex;
+  justify-content: center;
+}
+
+.main-content .stock-naming-data {
+  font-family: Avenir, Serif;
+  font-size: 1.5em;
+  font-weight: 300;
+  color: #59737c;
+}
+
+.stock-list li {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #e5e5e5;
+  border-right:none;
+  border-left:none;
+  padding: 3% 1%;
+}
+
+.btn {
+  background-color: #fff;
+  border: none;
+  margin: 0 2px;
+}
+
+.btn img {
+  height: 42px;
+}
+
+.increase {
+  background-color: #63da39;
+}
+
+.decrease {
+  background-color: #ff4f46;
+}
+
+.stock-naming-data,
+.stock-numbers {
+  display: flex;
+  align-items: center;
+}
+.up-down {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  margin: 0 5px;
+}
+
+.icon-arrow {
+  border: none;
+  color: rgb(192,192,192);
+  background: none;
+  padding: 0;
+}
+
+.icon-reverse {
+  transform: ScaleY(-1);
+}
+
+.current-price {
+  font-family: HelveticaNeueW01-55Roman, Serif;
+  font-size: 1.45em;
+  color: #59737c;
+  text-align: right;
+  margin: 0 5px;
+}
+
+.daily-change {
+  font-family: Avenir, serif;
+  font-size: 1.5em;
+  font-weight: 300;
+  text-align: center;
+  color: #ffffff;
+  width: 5em;
+  height: 2em;
+  border: none;
+  border-radius: 10px;
+  margin: 0 5px;
+}
