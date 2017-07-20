@@ -27,9 +27,9 @@ body {
   display: flex;
   align-content: center;
   flex-direction: column;
-  width: 80vw;
-  height: 100vh;
-  margin-top: 10px;
+  width: 90vw;
+  height: 95vh;
+  margin: 20px 0;
   background-color: #fff;
   border-radius: 10px;
 }
@@ -45,7 +45,7 @@ body {
 .stokr-logo {
   width: 166px;
   height: 46px;
-  font-family: LucidaGrande, Serif;
+  font-family: LucidaGrande;
   font-size: 39px;
   font-weight: bold;
   color: #41bf15;
@@ -56,8 +56,8 @@ body {
 }
 
 .main-content .stock-naming-data {
-  font-family: Avenir, Serif;
-  font-size: 1.5em;
+  font-family: Avenir;
+  font-size: 1.4em;
   font-weight: 300;
   color: #59737c;
 }
@@ -68,17 +68,20 @@ body {
   border: 1px solid #e5e5e5;
   border-right:none;
   border-left:none;
-  padding: 3% 1%;
+  padding: 1% 1%;
 }
 
+.disabled {
+  opacity: 0.4;
+}
 .btn {
   background-color: #fff;
   border: none;
-  margin: 0 2px;
+  margin: 0 10px;
 }
 
 .btn img {
-  height: 42px;
+  height: 32px;
 }
 
 .increase {
@@ -94,30 +97,40 @@ body {
   display: flex;
   align-items: center;
 }
+
+.stock-name {
+  padding-left: 4px;
+}
 .up-down {
   display: flex;
   flex-direction: column;
   align-content: center;
-  margin: 0 5px;
+  margin: 0 10px;
 }
 
 .icon-arrow {
   border: none;
   color: rgb(192,192,192);
   background: none;
+  font-size: 1.5em;
+  margin: 0;
   padding: 0;
+  position:relative;
+  top: 4px;
 }
 
 .icon-reverse {
   transform: ScaleY(-1);
+  position: relative;
+  top: -4px;
 }
 
 .current-price {
-  font-family: HelveticaNeueW01-55Roman, Serif;
-  font-size: 1.45em;
+  font-family: HelveticaNeueW01-55Roman;
+  font-size: 1.2em;
   color: #59737c;
   text-align: right;
-  margin: 0 5px;
+  margin: 0 10px;
 }
 
 .daily-change {
@@ -130,5 +143,5 @@ body {
   height: 2em;
   border: none;
   border-radius: 10px;
-  margin: 0 5px;
+  margin: 0 10px;
 }
