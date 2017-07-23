@@ -155,8 +155,8 @@
   function renderHtmlPage(state) {
     const rootElement = document.querySelector('.root');
     rootElement.innerHTML = renderHeader(state.ui.screen) + renderMainContent(state);
-    rootElement.querySelector('.stock-list').addEventListener('click', eventsHandler[0]);
-    rootElement.querySelector('.app-header').addEventListener('click', eventsHandler[1]);
+    rootElement.querySelector('.stock-list') &&  rootElement.querySelector('.stock-list').addEventListener('click', eventsHandler[0]);
+    rootElement.querySelector('.app-header') && rootElement.querySelector('.app-header').addEventListener('click', eventsHandler[1]);
     rootElement.querySelector('.filter-section') && rootElement.querySelector('.filter-section').addEventListener('click', eventsHandler[2]);
   }
 

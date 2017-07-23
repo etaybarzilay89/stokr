@@ -21,7 +21,6 @@
   const view = window.Stoker.view;
   const model = window.Stoker.model;
 
-
   function dispatchEvents(e) {
     const target = e.target;
     // const currentTarget = e.currentTarget;
@@ -39,20 +38,17 @@
 
     view.renderHtmlPage(model.getState());
   }
+
   function dispatchHeaderEvents(e) {
     const target = e.target;
 
     if (target.classList.contains('selected')) {
       model.updateScreen(contentEnum.stocks);
-      return;
-    }
-    if (target.classList.contains('search')) {
+    } else if (target.classList.contains('search')) {
       model.updateScreen(contentEnum.search);
-    }
-    if (target.classList.contains('filter')) {
+    } else if (target.classList.contains('filter')) {
       model.updateScreen(contentEnum.filter);
-    }
-    if (target.classList.contains('settings')) {
+    } else if (target.classList.contains('settings')) {
       model.updateScreen(contentEnum.settings);
     }
 
