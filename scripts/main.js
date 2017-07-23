@@ -20,17 +20,39 @@
       "LastTradePriceOnly": "69.620003"
     },
     {
-      "Symbol": "YHOO",
-      "Name": "Yahoo! Inc.",
+      "Symbol": "BLAA1",
+      "Name": "BLAA1! Inc.",
       "Change": "0.279999",
-      "PercentChange": "+1.11%",
+      "PercentChange": "+11.11%",
       "Capital": "6",
-      "LastTradePriceOnly": "50.599998"
-    }
+      "LastTradePriceOnly": "150.599998"
+    },
+    {
+      "Symbol": "BLAA2",
+      "Name": "BLAA2! Inc.",
+      "Change": "0.279999",
+      "PercentChange": "+111.11%",
+      "Capital": "7",
+      "LastTradePriceOnly": "5.4499998"
+    },
+    {
+      "Symbol": "BLAA3",
+      "Name": "BLAA3! Inc.",
+      "Change": "0.279999",
+      "PercentChange": "+21.11%",
+      "Capital": "8",
+      "LastTradePriceOnly": "4250.119998"
+    },
+    {
+      "Symbol": "BLAA4",
+      "Name": "BLAA4! Inc.",
+      "Change": "0.279999",
+      "PercentChange": "+0.11%",
+      "Capital": "9",
+      "LastTradePriceOnly": "11150.319998"
+    },
   ];
-
-  let changePresentation =
-  {
+  let changePresentation = {
     'percentage' : 0,
     'change' : 1,
     'capital' : 2,
@@ -44,37 +66,50 @@
     'length' : 4
   };
 
-  function renderStocks(stocks) {
-    return `
-    <ul class="stock-list list-reset">
-      ${stocks.map(renderStock).join('')}
-    </ul>
-    `;
-  }
+  function dispatchEvents(e) {
+    const target = e.target;
+    const currentTarget = e.currentTarget;
 
-  function renderStock(stock, index) {
-    const change = getChangePresentation(stock);
-    const lastTradePriceTrunced = Math.trunc(stock.LastTradePriceOnly * 100) / 100;
-    const changeState = parseFloat(change) >= 0 ? 'increase' : 'decrease';
-    const upDisabled = index === 0 ? 'disabled' : '';
-    const bottomDisabled = index === stocks.length - 1 ? 'disabled' : '';
-    const hide = presentedContent === content.filter ? 'hide' : '';
-    return `
-      <li>
-        <div class="stock-naming-data">
-          <span class="stock-symbol">${stock.Symbol}</span>
-          <span class="stock-name">(${stock.Name})</span>
-        </div>
-        <div class="stock-numbers">
-          <span class="current-price">${lastTradePriceTrunced}</span>
-          <button class="daily-change ${changeState}">${change}</button>
-          <div class="up-down ${hide}">
-            <button data-symbol="${stock.Symbol}" class="icon-arrow ${upDisabled}" ${upDisabled}></button>
-            <button data-symbol="${stock.Symbol}" class="icon-arrow icon-reverse ${bottomDisabled}" ${bottomDisabled}></button>
-          </div>
-        </div>
-      </li>
-    `;
+    if (currentTarget.classList.contains('app-header'))
+    {
+      dispatchHeaderEvents(e);
+    }
+
+    if (target.classList.contains('daily-change')) {
+      presentChangeInPercentage = (presentChangeInPercentage + 1) % changePresentation.length;
+    }
+
+    let targetDataSymbol = target.getAttribute('data-symbol');
+    if (target.classList.contains('icon-reverse')) {
+      ShiftStocks(targetDataSymbol, 'down');
+    } else if (target.classList.contains('icon-arrow')) {
+      ShiftStocks(targetDataSymbol, 'up');
+    }
+
+    renderHtmlPage();
+  }
+  function dispatchHeaderEvents(e) {
+    const target = e.target;
+
+    if (target.classList.contains('selected'))
+    {
+      presentedContent = content.stocks;
+      return;
+    }
+    if (target.classList.contains('search')) {
+      presentedContent = content.search;
+    }
+    if (target.classList.contains('filter')) {
+      presentedContent = content.filter;
+    }
+    if (target.classList.contains('settings')) {
+      presentedContent = content.settings;
+    }
+  }
+  function renderHtmlPage() {
+    rootElement.innerHTML = renderHeader() + renderMainContent();
+    rootElement.querySelector('.main-content').addEventListener('click', dispatchEvents);
+    rootElement.querySelector('.app-header').addEventListener('click', dispatchEvents);
   }
   function renderHeader() {
     let searchSelected = presentedContent === content.search ? 'selected' : '';
@@ -110,72 +145,36 @@
     return contentString;
 
   }
-  function renderHtmlPage() {
-    rootElement.innerHTML = renderHeader() + renderMainContent();
-    rootElement.querySelector('.main-content').addEventListener('click', dispatchEvents);
-    rootElement.querySelector('.app-header').addEventListener('click', dispatchEvents);
-  }
-
-  function dispatchEvents(e) {
-    const target = e.target;
-    const currentTarget = e.currentTarget;
-
-    if (currentTarget.classList.contains('app-header'))
-    {
-      dispatchHeaderEvents(e);
-    }
-
-    if (target.classList.contains('daily-change')) {
-      presentChangeInPercentage = (presentChangeInPercentage + 1) % changePresentation.length;
-    }
-
-    let targetDataSymbol = target.getAttribute('data-symbol');
-    if (target.classList.contains('icon-reverse')) {
-      ShiftStocks(targetDataSymbol, 'down');
-    } else if (target.classList.contains('icon-arrow')) {
-      ShiftStocks(targetDataSymbol, 'up');
-    }
-
-    renderHtmlPage();
-  }
-
-  function dispatchHeaderEvents(e) {
-    const target = e.target;
-
-    if (target.classList.contains('selected'))
-    {
-      presentedContent = content.stocks;
-      return;
-    }
-    if (target.classList.contains('search')) {
-      presentedContent = content.search;
-    }
-    if (target.classList.contains('filter')) {
-      presentedContent = content.filter;
-    }
-    if (target.classList.contains('settings')) {
-      presentedContent = content.settings;
-    }
-  }
-
-  function renderFilter() {
+  function renderStocks(stocks) {
     return `
-    <section class="filter">
-      <form class="filter-form">
-        <div class="filter-text">
-          <label for="by-name-id">By Name</label>
-          <input type="text" name="by-name" id="by-name-id">
-          <label for="by-range-from-id">By Range: From</label>
-          <input type="text" name="by-range-from" id="by-range-from-id">
-          <label for="by-gain-id">By Gain</label>
-          <input type="text" name="by-gain" id="by-gain-id">
-          <label for="by-range-to-id">By Range: To</label>
-          <input type="text" name="by-range-to" id="by-range-to-id">
+    <ul class="stock-list list-reset">
+      ${stocks.map(renderStock).join('')}
+    </ul>
+    `;
+  }
+  function renderStock(stock, index) {
+    const change = getChangePresentation(stock);
+    const lastTradePriceTrunced = Math.trunc(stock.LastTradePriceOnly * 100) / 100;
+    const changeState = parseFloat(change) >= 0 ? 'increase' : 'decrease';
+    const upDisabled = index === 0 ? 'disabled' : '';
+    const bottomDisabled = index === stocks.length - 1 ? 'disabled' : '';
+    const hide = presentedContent === content.filter ? 'hide' : '';
+    return `
+      <li>
+        <div class="stock-naming-data">
+          <span class="stock-symbol">${stock.Symbol}</span>
+          <span class="stock-name">(${stock.Name})</span>
         </div>
-        <button type="submit">Apply</button>
-      </form>
-    </section>
-    `
+        <div class="stock-numbers">
+          <span class="current-price">${lastTradePriceTrunced}</span>
+          <button class="daily-change ${changeState}">${change}</button>
+          <div class="up-down ${hide}">
+            <button data-symbol="${stock.Symbol}" class="icon-arrow ${upDisabled}" ${upDisabled}></button>
+            <button data-symbol="${stock.Symbol}" class="icon-arrow icon-reverse ${bottomDisabled}" ${bottomDisabled}></button>
+          </div>
+        </div>
+      </li>
+    `;
   }
   function ShiftStocks(stockSymbol, direction) {
     let currentStockIndex = stocks.findIndex(stock => stock.Symbol === stockSymbol);
@@ -184,7 +183,35 @@
     stocks[currentStockIndex] = stocks[switchStockIndex];
     stocks[switchStockIndex] = tempStock;
   }
-
+  function renderFilter() {
+    return `
+    <section class="filter">
+      <form class="filter-form">
+        <div class="filter-text">
+          <div>
+            <label for="by-name-id">By Name</label>
+            <input type="text" name="by-name" id="by-name-id">
+          </div>
+          <div>
+            <label for="by-range-from-id">By Range: From</label>
+            <input type="text" name="by-range-from" id="by-range-from-id">
+          </div>
+          <div>
+            <label for="by-gain-id">By Gain</label>
+            <input type="text" name="by-gain" id="by-gain-id">
+          </div>
+          <div>
+            <label for="by-range-to-id">By Range: To</label>
+            <input type="text" name="by-range-to" id="by-range-to-id">
+          </div>
+        </div>
+        <div class="submit-container">
+          <button type="submit">Apply</button>
+        </div>
+      </form>
+    </section>
+    `
+  }
   function getChangePresentation(stock) {
     if (presentChangeInPercentage === changePresentation.percentage)
     {

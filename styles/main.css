@@ -70,9 +70,10 @@ body {
 
 .main-content form {
   display: flex;
+  justify-content: space-between;
 }
 .main-content .filter .filter-text {
-  width: 80%;
+  width: 88%;
   display: flex;
   flex-wrap: wrap;
   font-family: HelveticaNeueW01-55Roman;
@@ -80,9 +81,12 @@ body {
   color: #59737c;
 }
 
-.main-content .filter .filter-text label {
-  width: 20%;
+.main-content .filter .filter-text div {
+  width: 48%;
   margin-right: 1%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .main-content .filter button {
@@ -98,6 +102,13 @@ body {
   color: #ffffff;
 }
 
+.main-content .filter .submit-container {
+  width: 12%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
 .main-content .stock-list .hide button {
   display: none;
 }
@@ -128,6 +139,7 @@ input {
   border: none;
   margin: 0 2px;
   font-size: 2em;
+  color: #ababab;
 }
 
 .btn:hover,
@@ -182,7 +194,7 @@ input {
 
 .current-price {
   font-family: HelveticaNeueW01-55Roman;
-  font-size: 1.2em;
+  font-size: 1.5em;
   color: #59737c;
   text-align: right;
   margin: 0 10px;
