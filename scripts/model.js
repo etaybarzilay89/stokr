@@ -72,14 +72,6 @@
     return state;
   }
 
-  function getStocks() {
-    return state.data;
-  }
-
-  function addStock(stock) {
-    getStocks().push(stock);
-  }
-
   function shiftStocks(stockSymbol, direction) {
     let currentStockIndex = stocks.findIndex(stock => stock.Symbol === stockSymbol);
     let switchStockIndex = (direction === 'up') ? currentStockIndex - 1 : currentStockIndex + 1;
@@ -102,10 +94,9 @@
     changePresentation = changeEnum;
     state.ui.change = changePresentation.percentage;
   }
+
   window.Stoker.model = {
     getState,
-    getStocks,
-    addStock,
     shiftStocks,
     toggleChange,
     updateScreen,

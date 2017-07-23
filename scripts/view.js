@@ -10,11 +10,22 @@
 
   window.Stoker = window.Stoker || {};
 
-  function renderHtmlPage(state) {
-    const rootElement = document.querySelector('.root');
-    rootElement.innerHTML = renderHeader(state.ui.screen) + renderMainContent(state);
-    rootElement.querySelector('.main-content').addEventListener('click', eventsHandler);
-    rootElement.querySelector('.app-header').addEventListener('click', eventsHandler);
+  //private
+
+  function renderMainContent(state) {
+    let contentString = `<main class="main-content">`;
+    const stocks = state.data;
+
+    if (!isScreen(state.ui.screen, 'settings')) {
+      if (isScreen(state.ui.screen, 'filter')) {
+        contentString += `${renderFilter()}`;
+      }
+      contentString += `${renderStocks(stocks, state.ui.change, state.ui.screen)}`;
+    }
+
+    contentString += `</main>`;
+    return contentString;
+
   }
 
   function renderHeader(screenId) {
@@ -35,21 +46,6 @@
         </nav>
       </header>
     `;
-  }
-  function renderMainContent(state) {
-    let contentString = `<main class="main-content">`;
-    const stocks = state.data;
-
-    if (!isScreen(state.ui.screen, 'settings')) {
-      if (isScreen(state.ui.screen, 'filter')) {
-        contentString += `${renderFilter()}`;
-      }
-      contentString += `${renderStocks(stocks, state.ui.change, state.ui.screen)}`;
-    }
-
-    contentString += `</main>`;
-    return contentString;
-
   }
 
   function renderStocks(stocks, changePresentation, screenId) {
@@ -89,7 +85,7 @@
 
   function renderFilter() {
     return `
-    <section class="filter">
+    <section class="filter-section">
       <form class="filter-form">
         <div class="filter-text">
           <div>
@@ -136,12 +132,6 @@
     }
   }
 
-  function init(eventsHandlerPtr, screensEnum, changeEnum) {
-      eventsHandler = eventsHandlerPtr;
-      content = screensEnum;
-      changePresentation = changeEnum;
-  }
-
   function getChangePresentation(stock, changeState) {
     const stockChange = changeState;
     if (stockChange === changePresentation.percentage)
@@ -152,6 +142,22 @@
     }
 
     return stock.Capital;
+  }
+
+  // public
+
+  function init(eventsHandlersPtr, screensEnum, changeEnum) {
+      eventsHandler = eventsHandlersPtr;
+      content = screensEnum;
+      changePresentation = changeEnum;
+  }
+
+  function renderHtmlPage(state) {
+    const rootElement = document.querySelector('.root');
+    rootElement.innerHTML = renderHeader(state.ui.screen) + renderMainContent(state);
+    rootElement.querySelector('.stock-list').addEventListener('click', eventsHandler[0]);
+    rootElement.querySelector('.app-header').addEventListener('click', eventsHandler[1]);
+    rootElement.querySelector('.filter-section') && rootElement.querySelector('.filter-section').addEventListener('click', eventsHandler[2]);
   }
 
   window.Stoker.view = {

@@ -24,12 +24,7 @@
 
   function dispatchEvents(e) {
     const target = e.target;
-    const currentTarget = e.currentTarget;
-
-    if (currentTarget.classList.contains('app-header'))
-    {
-      dispatchHeaderEvents(e);
-    }
+    // const currentTarget = e.currentTarget;
 
     if (target.classList.contains('daily-change')) {
       model.toggleChange();
@@ -60,10 +55,23 @@
     if (target.classList.contains('settings')) {
       model.updateScreen(contentEnum.settings);
     }
+
+    view.renderHtmlPage(model.getState());
   }
+
+  function dispatchFilterEvents(e) {
+    return e;
+  }
+
   function init() {
     const state = model.getState();
-    view.init(dispatchEvents, contentEnum, changePresentationEnum);
+    const eventHandlers = [
+      dispatchEvents,
+      dispatchHeaderEvents,
+      dispatchFilterEvents
+    ];
+
+    view.init(eventHandlers, contentEnum, changePresentationEnum);
     model.init(contentEnum, changePresentationEnum);
     view.renderHtmlPage(state);
   }
