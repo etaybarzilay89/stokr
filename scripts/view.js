@@ -4,7 +4,6 @@
 
 (function () {
   // view
-  let eventsHandler;
   let content = {};
   let changePresentation = {};
 
@@ -107,7 +106,7 @@
           </div>
         </div>
         <div class="submit-container">
-          <button type="submit" class="filter-submit">Apply</button>
+          <button type="button" class="filter-submit">Apply</button>
         </div>
       </form>
     </section>
@@ -128,15 +127,14 @@
       return content.settings;
     } else if (screenName === 'stocks') {
       return content.stocks;
-    } else {
-      return false;
     }
+
+    return false;
   }
 
   function getChangePresentation(stock, changeState) {
     const stockChange = changeState;
-    if (stockChange === changePresentation.percentage)
-    {
+    if (stockChange === changePresentation.percentage) {
       return stock.PercentChange;
     } else if (stockChange === changePresentation.change) {
       return (Math.trunc(stock.Change * 10) / 10) + 'B';
@@ -145,10 +143,57 @@
     return stock.Capital;
   }
 
+  function dispatchEvents(e) {
+    const ctrl = window.Stoker.controller;
+    const target = e.target;
+    let targetDataSymbol = target.getAttribute('data-symbol');
+
+    if (target.classList.contains('daily-change')) {
+      ctrl.toggleChange();
+    } else if (target.classList.contains('icon-reverse')) {
+      ctrl.shiftStocks(targetDataSymbol, 'down');
+    } else if (target.classList.contains('icon-arrow')) {
+      ctrl.shiftStocks(targetDataSymbol, 'up');
+    }
+  }
+
+  function dispatchHeaderEvents(e) {
+    const ctrl = window.Stoker.controller;
+    const target = e.target;
+
+    if (target.classList.contains('selected')) {
+      ctrl.updateScreen(content.stocks);
+    } else if (target.classList.contains('search')) {
+      ctrl.updateScreen(content.search);
+    } else if (target.classList.contains('filter')) {
+      ctrl.updateScreen(content.filter);
+    } else if (target.classList.contains('settings')) {
+      ctrl.updateScreen(content.settings);
+    }
+  }
+
+  function dispatchFilterEvents(e) {
+    const ctrl = window.Stoker.controller;
+    const target = e.target;
+    const currentTarget = e.currentTarget;
+
+    if (!target.classList.contains("filter-submit")) {
+      return;
+    }
+
+    const filteredFields= {
+      'name' : currentTarget.querySelector('#by-name-id').value,
+      'gain' : currentTarget.querySelector('#by-gain-id').value,
+      'from' : currentTarget.querySelector('#by-range-from-id').value,
+      'to' : currentTarget.querySelector('#by-range-to-id').value
+    };
+
+    ctrl.filterStocks(filteredFields);
+  }
+
   // public
 
-  function init(eventsHandlersPtr, screensEnum, changeEnum) {
-      eventsHandler = eventsHandlersPtr;
+  function init(screensEnum, changeEnum) {
       content = screensEnum;
       changePresentation = changeEnum;
   }
@@ -156,9 +201,9 @@
   function renderHtmlPage(state) {
     const rootElement = document.querySelector('.root');
     rootElement.innerHTML = renderHeader(state.ui.screen) + renderMainContent(state);
-    rootElement.querySelector('.stock-list') &&  rootElement.querySelector('.stock-list').addEventListener('click', eventsHandler[0]);
-    rootElement.querySelector('.app-header') && rootElement.querySelector('.app-header').addEventListener('click', eventsHandler[1]);
-    rootElement.querySelector('.filter-section') && rootElement.querySelector('.filter-section').addEventListener('click', eventsHandler[2]);
+    rootElement.querySelector('.stock-list') &&  rootElement.querySelector('.stock-list').addEventListener('click', dispatchEvents);
+    rootElement.querySelector('.app-header') && rootElement.querySelector('.app-header').addEventListener('click', dispatchHeaderEvents);
+    rootElement.querySelector('.filter-section') && rootElement.querySelector('.filter-section').addEventListener('click', dispatchFilterEvents);
   }
 
   window.Stoker.view = {

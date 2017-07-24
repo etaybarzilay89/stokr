@@ -20,73 +20,64 @@
   window.Stoker = window.Stoker || {};
   const view = window.Stoker.view;
   const model = window.Stoker.model;
+  let state = model.getState();
 
-  function dispatchEvents(e) {
-    const target = e.target;
-    let targetDataSymbol = target.getAttribute('data-symbol');
+  // public
 
-    if (target.classList.contains('daily-change')) {
-      model.toggleChange();
-    } else if (target.classList.contains('icon-reverse')) {
-      model.shiftStocks(targetDataSymbol, 'down');
-    } else if (target.classList.contains('icon-arrow')) {
-      model.shiftStocks(targetDataSymbol, 'up');
-    } else {
-      return;
-    }
+  function shiftStocks(stockSymbol, direction) {
+    let currentStockIndex = state.data.findIndex(stock => stock.Symbol === stockSymbol);
+    let switchStockIndex = (direction === 'up') ? currentStockIndex - 1 : currentStockIndex + 1;
+    let tempStock = state.data[currentStockIndex];
+    state.data[currentStockIndex] = state.data[switchStockIndex];
+    state.data[switchStockIndex] = tempStock;
 
     view.renderHtmlPage(model.getState());
   }
 
-  function dispatchHeaderEvents(e) {
-    const target = e.target;
-
-    if (target.classList.contains('selected')) {
-      model.updateScreen(contentEnum.stocks);
-    } else if (target.classList.contains('search')) {
-      model.updateScreen(contentEnum.search);
-    } else if (target.classList.contains('filter')) {
-      model.updateScreen(contentEnum.filter);
-    } else if (target.classList.contains('settings')) {
-      model.updateScreen(contentEnum.settings);
-    } else {
-      return;
-    }
+  function toggleChange() {
+    state.ui.change = (state.ui.change + 1) % changePresentationEnum.length;
 
     view.renderHtmlPage(model.getState());
   }
 
-  function dispatchFilterEvents(e) {
-    const target = e.target;
-    const currentTarget = e.currentTarget;
+  function updateScreen(screenId) {
+    state.ui.screen = screenId;
+    initializeData();
 
-    if (!target.classList.contains("filter-submit")) {
-      return;
-    }
-
-    const filteredFields= {
-      'name' : currentTarget.querySelector('#by-name-id').value,
-      'gain' : currentTarget.querySelector('#by-gain-id').value,
-      'from' : currentTarget.querySelector('#by-range-from-id').value,
-      'to' : currentTarget.querySelector('#by-range-to-id').value
-    };
-
-    model.filterStocks(filteredFields);
     view.renderHtmlPage(model.getState());
+  }
+
+  function filterStocks(filteredFields) {
+    if (!(filteredFields['name'] && filteredFields['gain'] && filteredFields['from'] && filteredFields['to'])) {
+      state.filteredData = state.stocks;
+    }
+    const name = filteredFields['name'].toLowerCase();
+    state.filteredData = state.data.filter(stock => stock.Name.toLowerCase().includes(name));
+
+    view.renderHtmlPage(model.getState());
+  }
+
+  // private
+
+  function initializeData() {
+    state.data = model.getState().data;
+    state.filteredData = state.data;
   }
 
   function init() {
     const state = model.getState();
-    const eventHandlers = [
-      dispatchEvents,
-      dispatchHeaderEvents,
-      dispatchFilterEvents
-    ];
 
-    view.init(eventHandlers, contentEnum, changePresentationEnum);
+    view.init(contentEnum, changePresentationEnum);
     model.init(contentEnum, changePresentationEnum);
     view.renderHtmlPage(state);
   }
+
+  window.Stoker.controller = {
+    shiftStocks,
+    toggleChange,
+    updateScreen,
+    filterStocks
+  };
 
   init();
 })();
