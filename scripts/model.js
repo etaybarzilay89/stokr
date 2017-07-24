@@ -56,6 +56,7 @@
   ];
   let content = {};
   let changePresentation = {};
+  let filteredStocks = stocks;
 
   window.Stoker = window.Stoker || {};
 
@@ -65,7 +66,8 @@
       screen: content.stocks,
       change: changePresentation.percentage
     },
-    data: stocks
+    data: stocks,
+    filteredData: filteredStocks
   };
 
   function getState() {
@@ -86,13 +88,28 @@
 
   function updateScreen(screenId) {
     state.ui.screen = screenId;
+    initializeData();
+  }
+
+  function filterStocks(filteredFields) {
+    if (!(filteredFields['name'] && filteredFields['gain'] && filteredFields['from'] && filteredFields['to'])) {
+      state.filteredData = state.stocks;
+    }
+    const name = filteredFields['name'].toLowerCase();
+    state.filteredData = state.data.filter(stock => stock.Name.toLowerCase().includes(name));
   }
 
   function init(screensEnum, changeEnum) {
     content = screensEnum;
-    state.ui.screen = content.stocks;
     changePresentation = changeEnum;
     state.ui.change = changePresentation.percentage;
+    state.ui.screen = content.stocks;
+    initializeData();
+  }
+
+  function initializeData() {
+    state.data = stocks;
+    state.filteredData = state.data;
   }
 
   window.Stoker.model = {
@@ -100,6 +117,7 @@
     shiftStocks,
     toggleChange,
     updateScreen,
+    filterStocks,
     init
   };
 

@@ -14,13 +14,14 @@
 
   function renderMainContent(state) {
     let contentString = `<main class="main-content">`;
-    const stocks = state.data;
 
     if (!isScreen(state.ui.screen, 'settings')) {
       if (isScreen(state.ui.screen, 'filter')) {
         contentString += `${renderFilter()}`;
+        contentString += `${renderStocks(state.filteredData, state.ui.change, state.ui.screen)}`;
+      } else {
+        contentString += `${renderStocks(state.data, state.ui.change, state.ui.screen)}`;
       }
-      contentString += `${renderStocks(stocks, state.ui.change, state.ui.screen)}`;
     }
 
     contentString += `</main>`;
@@ -106,7 +107,7 @@
           </div>
         </div>
         <div class="submit-container">
-          <button type="submit">Apply</button>
+          <button type="submit" class="filter-submit">Apply</button>
         </div>
       </form>
     </section>

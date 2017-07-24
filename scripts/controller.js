@@ -23,17 +23,16 @@
 
   function dispatchEvents(e) {
     const target = e.target;
-    // const currentTarget = e.currentTarget;
+    let targetDataSymbol = target.getAttribute('data-symbol');
 
     if (target.classList.contains('daily-change')) {
       model.toggleChange();
-    }
-
-    let targetDataSymbol = target.getAttribute('data-symbol');
-    if (target.classList.contains('icon-reverse')) {
+    } else if (target.classList.contains('icon-reverse')) {
       model.shiftStocks(targetDataSymbol, 'down');
     } else if (target.classList.contains('icon-arrow')) {
       model.shiftStocks(targetDataSymbol, 'up');
+    } else {
+      return;
     }
 
     view.renderHtmlPage(model.getState());
@@ -50,13 +49,30 @@
       model.updateScreen(contentEnum.filter);
     } else if (target.classList.contains('settings')) {
       model.updateScreen(contentEnum.settings);
+    } else {
+      return;
     }
 
     view.renderHtmlPage(model.getState());
   }
 
   function dispatchFilterEvents(e) {
-    return e;
+    const target = e.target;
+    const currentTarget = e.currentTarget;
+
+    if (!target.classList.contains("filter-submit")) {
+      return;
+    }
+
+    const filteredFields= {
+      'name' : currentTarget.querySelector('#by-name-id').value,
+      'gain' : currentTarget.querySelector('#by-gain-id').value,
+      'from' : currentTarget.querySelector('#by-range-from-id').value,
+      'to' : currentTarget.querySelector('#by-range-to-id').value
+    };
+
+    model.filterStocks(filteredFields);
+    view.renderHtmlPage(model.getState());
   }
 
   function init() {
