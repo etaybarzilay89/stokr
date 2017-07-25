@@ -4,17 +4,17 @@
 (function () {
 
   let changePresentationEnum = {
-    'percentage' : 0,
-    'change' : 1,
-    'capital' : 2,
-    'length' : 3
+    'percentage': 0,
+    'change': 1,
+    'capital': 2,
+    'length': 3
   };
   let contentEnum = {
-    'search' : 0,
-    'stocks' : 1,
-    'filter' : 2,
-    'settings' : 3,
-    'length' : 4
+    'search': 0,
+    'stocks': 1,
+    'filter': 2,
+    'settings': 3,
+    'length': 4
   };
 
   window.Stoker = window.Stoker || {};
@@ -57,14 +57,14 @@
       state.filteredData = state.stocks;
     }
 
-    const percentChange = stock => parseFloat(stock.PercentChange);
+    const percentChange = stock => parseFloat(stock.realtime_chg_percent);
     const namePredicate = stock => (!name || stock.Name.toLowerCase().includes(name));
     const gainPredicate = stock => (gain === 'all' ||
-      gain === 'positive' && percentChange(stock) >= 0 ||
-      gain === 'negative' && percentChange(stock) < 0);
+    gain === 'positive' && percentChange(stock) >= 0 ||
+    gain === 'negative' && percentChange(stock) < 0);
 
     const fromPredicate = stock => (!from && from !== 0 || percentChange(stock) >= from);
-    const toPredicate = stock => (!to  && to !== 0 || percentChange(stock) < to);
+    const toPredicate = stock => (!to && to !== 0 || percentChange(stock) < to);
 
     state.filteredData = state.data.filter(stock => namePredicate(stock) && gainPredicate(stock) && fromPredicate(stock) && toPredicate(stock));
     updateFilterInputs(name, gain, from, to);
@@ -79,14 +79,20 @@
     state.ui.filter = {name: name, gain: gain, from: stringFrom, to: stringTo};
   }
 
-  function fetchStocks() {
-    let stocks = fetch("/stokr/mocks/stocks.json").then(response => response.json());
-    return stocks;
+  function fetchStocks(requestedStocks) {
+    //using stocks.json mock file.
+    // return stocks = fetch("/stokr/mocks/stocks.json")
+    //   .then(response => response.json());
+
+    return stocks = fetch(`http://localhost:7000/quotes?q=${requestedStocks}`)
+      .then(response => response.json())
+      .then(data => data.query.results.quote);
   }
 
   function initializeData() {
     state.data = model.getState().data;
     state.filteredData = state.data;
+    updateFilterInputs('', '', '', '');
   }
 
   function init() {
@@ -95,12 +101,11 @@
     model.init(contentEnum, changePresentationEnum);
     view.renderHtmlPage(state);
 
-    setTimeout(() => {
-      fetchStocks().then(data => state.data = data).then(() => {
+    fetchStocks(state.requestedStocks)
+      .then(data => state.data = data)
+      .then(() => {
         view.renderHtmlPage(state);
       });
-    }, 10);
-
   }
 
   window.Stoker.controller = {

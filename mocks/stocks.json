@@ -2,49 +2,49 @@
   {
     "Symbol": "WIX",
     "Name": "Wix.com Ltd.",
-    "Change": "0.750000",
-    "PercentChange": "+1.51%",
-    "Capital": "4",
-    "LastTradePriceOnly": "76.099998"
+    "realtime_change": "0.750000",
+    "realtime_chg_percent": "+1.51",
+    "MarketCapitalization": "4",
+    "realtime_price": "76.099998"
   },
   {
     "Symbol": "MSFT",
     "Name": "Microsoft Corporation",
-    "PercentChange": "-2.09%",
-    "Change": "-0.850006",
-    "Capital": "-1",
-    "LastTradePriceOnly": "69.620003"
+    "realtime_chg_percent": "-2.09",
+    "realtime_change": "-0.850006",
+    "MarketCapitalization": "-1",
+    "realtime_price": "69.620003"
   },
   {
     "Symbol": "BLAA1",
     "Name": "BLAA1! Inc.",
-    "Change": "0.279999",
-    "PercentChange": "+11.11%",
-    "Capital": "6",
-    "LastTradePriceOnly": "150.599998"
+    "realtime_change": "0.279999",
+    "realtime_chg_percent": "+11.11",
+    "MarketCapitalization": "6",
+    "realtime_price": "150.599998"
   },
   {
     "Symbol": "BLAA2",
     "Name": "BLAA2! Inc.",
-    "Change": "0.279999",
-    "PercentChange": "+111.11%",
-    "Capital": "7",
-    "LastTradePriceOnly": "5.4499998"
+    "realtime_change": "0.279999",
+    "realtime_chg_percent": "+111.11",
+    "MarketCapitalization": "7",
+    "realtime_price": "5.4499998"
   },
   {
     "Symbol": "BLAA3",
     "Name": "BLAA3! Inc.",
-    "Change": "0.279999",
-    "PercentChange": "+21.11%",
-    "Capital": "8",
-    "LastTradePriceOnly": "4250.119998"
+    "realtime_change": "0.279999",
+    "realtime_chg_percent": "+21.11",
+    "MarketCapitalization": "8",
+    "realtime_price": "4250.119998"
   },
   {
     "Symbol": "BLAA4",
     "Name": "BLAA4! Inc.",
-    "Change": "0.279999",
-    "PercentChange": "+0.11%",
-    "Capital": "9",
-    "LastTradePriceOnly": "11150.319998"
+    "realtime_change": "0.279999",
+    "realtime_chg_percent": "+0.11",
+    "MarketCapitalization": "9",
+    "realtime_price": "11150.319998"
   }
 ]

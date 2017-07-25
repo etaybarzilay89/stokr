@@ -60,7 +60,7 @@
 
   function renderStock(stock, index, stocks, changePresentation, screenId) {
     const change = getChangePresentation(stock, changePresentation);
-    const lastTradePriceTrunced = Math.trunc(stock.LastTradePriceOnly * 100) / 100;
+    const lastTradePriceTrunced = Math.trunc(stock.realtime_price * 100) / 100;
     const changeState = parseFloat(change) >= 0 ? 'increase' : 'decrease';
     const upDisabled = index === 0 ? 'disabled' : '';
     const bottomDisabled = index === stocks.length - 1 ? 'disabled' : '';
@@ -142,12 +142,12 @@
   function getChangePresentation(stock, changeState) {
     const stockChange = changeState;
     if (stockChange === changePresentation.percentage) {
-      return stock.PercentChange;
+      return (Math.trunc(stock.realtime_chg_percent * 10) / 10) + '%';
     } else if (stockChange === changePresentation.change) {
-      return (Math.trunc(stock.Change * 10) / 10) + 'B';
+      return (Math.trunc(stock.realtime_change * 10) / 10);
     }
 
-    return stock.Capital;
+    return stock.MarketCapitalization;
   }
 
   function dispatchEvents(e) {

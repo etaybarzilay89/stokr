@@ -5,57 +5,7 @@
 (function () {
 
   let stocks = [];
-  // let stocks = [
-  //   {
-  //     "Symbol": "WIX",
-  //     "Name": "Wix.com Ltd.",
-  //     "Change": "0.750000",
-  //     "PercentChange": "+1.51%",
-  //     "Capital": "4",
-  //     "LastTradePriceOnly": "76.099998"
-  //   },
-  //   {
-  //     "Symbol": "MSFT",
-  //     "Name": "Microsoft Corporation",
-  //     "PercentChange": "-2.09%",
-  //     "Change": "-0.850006",
-  //     "Capital": "-1",
-  //     "LastTradePriceOnly": "69.620003"
-  //   },
-  //   {
-  //     "Symbol": "BLAA1",
-  //     "Name": "BLAA1! Inc.",
-  //     "Change": "0.279999",
-  //     "PercentChange": "+11.11%",
-  //     "Capital": "6",
-  //     "LastTradePriceOnly": "150.599998"
-  //   },
-  //   {
-  //     "Symbol": "BLAA2",
-  //     "Name": "BLAA2! Inc.",
-  //     "Change": "0.279999",
-  //     "PercentChange": "+111.11%",
-  //     "Capital": "7",
-  //     "LastTradePriceOnly": "5.4499998"
-  //   },
-  //   {
-  //     "Symbol": "BLAA3",
-  //     "Name": "BLAA3! Inc.",
-  //     "Change": "0.279999",
-  //     "PercentChange": "+21.11%",
-  //     "Capital": "8",
-  //     "LastTradePriceOnly": "4250.119998"
-  //   },
-  //   {
-  //     "Symbol": "BLAA4",
-  //     "Name": "BLAA4! Inc.",
-  //     "Change": "0.279999",
-  //     "PercentChange": "+0.11%",
-  //     "Capital": "9",
-  //     "LastTradePriceOnly": "11150.319998"
-  //   }
-  // ];
-
+  let requestedStocks = ['GOOG','WIX','MSFT'];
   let content = {};
   let changePresentation = {};
   let filteredStocks = stocks;
@@ -67,12 +17,13 @@
       change: changePresentation.percentage,
       filter: {
         'name' : '',
-        'gain' : 'All',
+        'gain' : 'all',
         'from' : '',
         'to' : ''
       }
     },
     data: stocks,
+    requestedStocks : requestedStocks,
     filteredData: filteredStocks
   };
 
