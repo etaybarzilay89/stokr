@@ -130,6 +130,7 @@
     view.renderHtmlPage(state);
 
     refreshData();
+    setInterval(refreshData, 60000);
   }
 
   window.Stoker.controller = {
