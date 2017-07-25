@@ -176,6 +176,8 @@
       ctrl.updateScreen(content.filter);
     } else if (target.classList.contains('settings')) {
       ctrl.updateScreen(content.settings);
+    } else if (target.classList.contains('refresh')) {
+      ctrl.refreshData();
     }
   }
 

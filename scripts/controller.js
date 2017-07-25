@@ -3,18 +3,19 @@
  */
 (function () {
 
-  let changePresentationEnum = {
+  const changePresentationEnum = {
     'percentage': 0,
     'change': 1,
     'capital': 2,
     'length': 3
   };
-  let contentEnum = {
+  const contentEnum = {
     'search': 0,
     'stocks': 1,
     'filter': 2,
     'settings': 3,
-    'length': 4
+    'refresh' : 4,
+    'length': 5
   };
 
   window.Stoker = window.Stoker || {};
@@ -25,11 +26,9 @@
   // public
 
   function shiftStocks(stockSymbol, direction) {
-    let currentStockIndex = state.data.findIndex(stock => stock.Symbol === stockSymbol);
-    let switchStockIndex = (direction === 'up') ? currentStockIndex - 1 : currentStockIndex + 1;
-    let tempStock = state.data[currentStockIndex];
-    state.data[currentStockIndex] = state.data[switchStockIndex];
-    state.data[switchStockIndex] = tempStock;
+    let stocksIndexes = findSwitchedStocksIndexes(stockSymbol, direction, state.data);
+    shiftStocksInArray(state.data, stocksIndexes.current, stocksIndexes.switch);
+    shiftStocksInArray(state.requestedStocks, stocksIndexes.current, stocksIndexes.switch);
 
     view.renderHtmlPage(model.getState());
   }
@@ -45,6 +44,14 @@
     initializeData();
 
     view.renderHtmlPage(model.getState());
+  }
+
+  function refreshData() {
+    const state = model.getState();
+
+    fetchStocks(state.requestedStocks)
+      .then(updateData)
+      .then(() => view.renderHtmlPage(state));
   }
 
   function filterStocks(filteredFields) {
@@ -72,6 +79,27 @@
   }
 
   // private
+
+  function findSwitchedStocksIndexes(stockSymbol, direction, stocks) {
+    let currentStockIndex = stocks.findIndex(stock => stock.Symbol === stockSymbol);
+    let switchStockIndex = (direction === 'up') ? currentStockIndex - 1 : currentStockIndex + 1;
+
+    return {
+      'current' : currentStockIndex,
+      'switch' : switchStockIndex
+    };
+  }
+
+  function shiftStocksInArray(stockArray, currentIndex, switchIndex) {
+    let tempStock = stockArray[currentIndex];
+    stockArray[currentIndex] = stockArray[switchIndex];
+    stockArray[switchIndex] = tempStock;
+  }
+
+  function updateData(data) {
+    const state = model.getState();
+    state.data = data;
+  }
 
   function updateFilterInputs(name, gain, from, to) {
     let stringFrom = isNaN(from) ? '' : from;
@@ -101,18 +129,15 @@
     model.init(contentEnum, changePresentationEnum);
     view.renderHtmlPage(state);
 
-    fetchStocks(state.requestedStocks)
-      .then(data => state.data = data)
-      .then(() => {
-        view.renderHtmlPage(state);
-      });
+    refreshData();
   }
 
   window.Stoker.controller = {
     shiftStocks,
     toggleChange,
     updateScreen,
-    filterStocks
+    filterStocks,
+    refreshData
   };
 
   init();
