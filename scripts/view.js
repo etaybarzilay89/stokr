@@ -16,7 +16,7 @@
 
     if (!isScreen(state.ui.screen, 'settings')) {
       if (isScreen(state.ui.screen, 'filter')) {
-        contentString += `${renderFilter()}`;
+        contentString += `${renderFilter(state.ui.filter)}`;
         contentString += `${renderStocks(state.filteredData, state.ui.change, state.ui.screen)}`;
       } else {
         contentString += `${renderStocks(state.data, state.ui.change, state.ui.screen)}`;
@@ -83,26 +83,33 @@
     `;
   }
 
-  function renderFilter() {
+  function renderFilter(filterData) {
+    let allSelected = filterData.gain === 'all' ? 'selected' : '';
+    let positiveSelected = filterData.gain === 'positive' ? 'selected' : '';
+    let negativeSelected = filterData.gain === 'negative' ? 'selected' : '';
     return `
     <section class="filter-section">
       <form class="filter-form">
         <div class="filter-text">
           <div>
             <label for="by-name-id">By Name</label>
-            <input type="text" name="by-name" id="by-name-id">
+            <input type="text" name="by-name" id="by-name-id" value="${filterData.name}">
           </div>
           <div>
             <label for="by-range-from-id">By Range: From</label>
-            <input type="text" name="by-range-from" id="by-range-from-id">
+            <input type="text" name="by-range-from" id="by-range-from-id" value="${filterData.from}">
           </div>
           <div>
             <label for="by-gain-id">By Gain</label>
-            <input type="text" name="by-gain" id="by-gain-id">
+            <select name="by-gain" id="by-gain-id" required>
+              <option value="All" ${allSelected}>all</option>
+              <option value="positive" ${positiveSelected}>positive</option>
+              <option value="negative" ${negativeSelected}>negative</option>
+            </select>
           </div>
           <div>
             <label for="by-range-to-id">By Range: To</label>
-            <input type="text" name="by-range-to" id="by-range-to-id">
+            <input type="text" name="by-range-to" id="by-range-to-id" value="${filterData.to}">
           </div>
         </div>
         <div class="submit-container">

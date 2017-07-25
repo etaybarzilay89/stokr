@@ -113,13 +113,17 @@ body {
   display: none;
 }
 
-input {
+input, select{
   width: 60%;
   height: 55px;
   border-radius: 10px;
   background-color: #ffffff;
   border: solid 1px #e0e0e0;
+  font-family: HelveticaNeueW01-55Roman;
+  font-size: 1.2em;
+  color: #59737c;
 }
+
 
 .stock-list li {
   display: flex;
