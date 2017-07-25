@@ -14,7 +14,7 @@
   function renderMainContent(state) {
     let contentString = `<main class="main-content">`;
 
-    if (!isScreen(state.ui.screen, 'settings')) {
+    if (!isScreen(state.ui.screen, 'search')) {
       if (isScreen(state.ui.screen, 'filter')) {
         contentString += `${renderFilter(state.ui.filter)}`;
         contentString += `${renderStocks(state.filteredData, state.ui.change, state.ui.screen)}`;
@@ -38,7 +38,7 @@
         <h1 class="stokr-logo">STOKR</h1>
         <nav class="nav-bar">
           <ul class="list-reset">
-            <li><button class="btn search icon-search ${searchSelected}"></button></li>
+            <li><a href="#search" class="btn search icon-search ${searchSelected}"></a></li>
             <li><button class="btn refresh icon-refresh"></button></li>
             <li><button class="btn filter icon-filter ${filterSelected}"></button></li>
             <li><button class="btn settings icon-settings ${settingsSelected}"></button></li>
@@ -68,6 +68,7 @@
     return `
       <li>
         <div class="stock-naming-data">
+          ${renderEdit(screenId, stock.Symbol)}
           <span class="stock-symbol">${stock.Symbol}</span>
           <span class="stock-name">(${stock.Name})</span>
         </div>
@@ -80,6 +81,14 @@
           </div>
         </div>
       </li>
+    `;
+  }
+
+  function renderEdit(screenId, stockSymbol) {
+    return !isScreen(screenId, 'settings') ? '' : `
+    <div class="remove-stock" data-symbol="${stockSymbol}">
+      <div class="remove-stock-line"></div>
+    </div>
     `;
   }
 
@@ -161,6 +170,8 @@
       ctrl.shiftStocks(targetDataSymbol, 'down');
     } else if (target.classList.contains('icon-arrow')) {
       ctrl.shiftStocks(targetDataSymbol, 'up');
+    } else if (target.classList.contains('remove-stock')) {
+      ctrl.removeStock(targetDataSymbol);
     }
   }
 
@@ -170,8 +181,6 @@
 
     if (target.classList.contains('selected')) {
       ctrl.updateScreen(content.stocks);
-    } else if (target.classList.contains('search')) {
-      ctrl.updateScreen(content.search);
     } else if (target.classList.contains('filter')) {
       ctrl.updateScreen(content.filter);
     } else if (target.classList.contains('settings')) {
@@ -179,6 +188,9 @@
     } else if (target.classList.contains('refresh')) {
       ctrl.refreshData();
     }
+
+    // else if (target.classList.contains('search')) {
+    //   ctrl.updateScreen(content.search);
   }
 
   function dispatchFilterEvents(e) {
@@ -200,11 +212,28 @@
     ctrl.filterStocks(filteredFields);
   }
 
+  function handleHashChange() {
+    const ctrl = window.Stoker.controller;
+    let screenId = content.stocks;
+    let hashValue = getHashValue();
+    if (hashValue) {
+      screenId = content[hashValue];
+    }
+
+    ctrl.updateScreen(screenId);
+  }
+
   // public
+
+  function getHashValue() {
+    return document.location.hash.replace('#', '');
+  }
 
   function init(screensEnum, changeEnum) {
       content = screensEnum;
       changePresentation = changeEnum;
+
+      window.addEventListener('hashchange', handleHashChange);
   }
 
   function renderHtmlPage(state) {
@@ -217,7 +246,8 @@
 
   window.Stoker.view = {
     renderHtmlPage,
-    init
+    init,
+    getHashValue
   }
 
 })();

@@ -113,6 +113,22 @@ body {
   display: none;
 }
 
+.main-content .stock-list .remove-stock {
+  width: 44px;
+  height: 43px;
+  background-color: #ff4f46;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.remove-stock .remove-stock-line {
+  width: 22px;
+  height: 2px;
+  border: solid 2px #ffffff;
+}
 input, select{
   width: 60%;
   height: 55px;
@@ -128,6 +144,7 @@ input, select{
 .stock-list li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border: 1px solid #e5e5e5;
   border-right:none;
   border-left:none;

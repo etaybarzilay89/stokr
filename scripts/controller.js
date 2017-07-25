@@ -25,6 +25,12 @@
 
   // public
 
+  function removeStock(stockSymbol) {
+    let stockIndex = state.data.findIndex(stock => stock.Symbol === stockSymbol);
+    state.data.splice(stockIndex, 1);
+    state.requestedStocks.splice(stockIndex, 1);
+    refreshData();
+  }
   function shiftStocks(stockSymbol, direction) {
     let stocksIndexes = findSwitchedStocksIndexes(stockSymbol, direction, state.data);
     shiftStocksInArray(state.data, stocksIndexes.current, stocksIndexes.switch);
@@ -73,6 +79,7 @@
     const fromPredicate = stock => (!from && from !== 0 || percentChange(stock) >= from);
     const toPredicate = stock => (!to && to !== 0 || percentChange(stock) < to);
 
+
     state.filteredData = state.data.filter(stock => namePredicate(stock) && gainPredicate(stock) && fromPredicate(stock) && toPredicate(stock));
     updateFilterInputs(name, gain, from, to);
     view.renderHtmlPage(model.getState());
@@ -114,7 +121,8 @@
 
     return stocks = fetch(`http://localhost:7000/quotes?q=${requestedStocks}`)
       .then(response => response.json())
-      .then(data => data.query.results.quote);
+      .then(data => data.query.results ? data.query.results.quote : [] )
+      .then(data => Array.isArray(data) ? data : [data]);
   }
 
   function initializeData() {
@@ -127,6 +135,11 @@
     const state = model.getState();
     view.init(contentEnum, changePresentationEnum);
     model.init(contentEnum, changePresentationEnum);
+
+    if (view.getHashValue() === 'search') {
+      updateScreen(contentEnum.search);
+    }
+
     view.renderHtmlPage(state);
 
     refreshData();
@@ -138,7 +151,8 @@
     toggleChange,
     updateScreen,
     filterStocks,
-    refreshData
+    refreshData,
+    removeStock
   };
 
   init();
