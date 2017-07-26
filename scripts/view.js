@@ -12,23 +12,52 @@
   //private
 
   function renderMainContent(state) {
+    if (isScreen(state.ui.screen, 'search')) {
+      return renderSearchMainContent();
+    }
+
+    return renderStokrMainContent(state);
+  }
+
+  function renderStokrMainContent(state) {
     let contentString = `<main class="main-content">`;
 
-    if (!isScreen(state.ui.screen, 'search')) {
-      if (isScreen(state.ui.screen, 'filter')) {
-        contentString += `${renderFilter(state.ui.filter)}`;
-        contentString += `${renderStocks(state.filteredData, state.ui.change, state.ui.screen)}`;
-      } else {
-        contentString += `${renderStocks(state.data, state.ui.change, state.ui.screen)}`;
-      }
+    if (isScreen(state.ui.screen, 'filter')) {
+      contentString += `${renderFilter(state.ui.filter)}`;
+      contentString += `${renderStocks(state.filteredData, state.ui.change, state.ui.screen)}`;
+    } else {
+      contentString += `${renderStocks(state.data, state.ui.change, state.ui.screen)}`;
     }
 
     contentString += `</main>`;
     return contentString;
+  }
 
+  function renderSearchMainContent() {
+    return `
+      <main class="search-main-content">
+        <div class="search-results">
+          <div class="icon-search-place-holder">
+          <h3>Search</h3>
+        </div>
+      </main>
+    `;
   }
 
   function renderHeader(screenId) {
+    return isScreen(screenId, 'search') ? renderSearchHeader() : renderStokrHeader(screenId);
+  }
+
+  function renderSearchHeader() {
+    return `
+    <header class="search-header">
+      <input type="text" name="search-stock" id="search-stock" autofocus>
+      <a href="#" name="cancel-search" id="cancel-search">Cancel</a>
+    </header>
+    `;
+  }
+
+  function renderStokrHeader(screenId) {
     let searchSelected = isScreen(screenId, 'search') ? 'selected' : '';
     let filterSelected = isScreen(screenId, 'filter') ? 'selected' : '';
     let settingsSelected = isScreen(screenId, 'settings') ? 'selected' : '';
@@ -188,9 +217,6 @@
     } else if (target.classList.contains('refresh')) {
       ctrl.refreshData();
     }
-
-    // else if (target.classList.contains('search')) {
-    //   ctrl.updateScreen(content.search);
   }
 
   function dispatchFilterEvents(e) {
@@ -242,6 +268,7 @@
     rootElement.querySelector('.stock-list') &&  rootElement.querySelector('.stock-list').addEventListener('click', dispatchEvents);
     rootElement.querySelector('.app-header') && rootElement.querySelector('.app-header').addEventListener('click', dispatchHeaderEvents);
     rootElement.querySelector('.filter-section') && rootElement.querySelector('.filter-section').addEventListener('click', dispatchFilterEvents);
+    rootElement.querySelector('.search-header') && rootElement.querySelector('.search-header').addEventListener('', dispatchFilterEvents);
   }
 
   window.Stoker.view = {

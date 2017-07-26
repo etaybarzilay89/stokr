@@ -31,6 +31,7 @@
     state.requestedStocks.splice(stockIndex, 1);
     refreshData();
   }
+
   function shiftStocks(stockSymbol, direction) {
     let stocksIndexes = findSwitchedStocksIndexes(stockSymbol, direction, state.data);
     shiftStocksInArray(state.data, stocksIndexes.current, stocksIndexes.switch);
@@ -143,7 +144,7 @@
     view.renderHtmlPage(state);
 
     refreshData();
-    setInterval(refreshData, 60000);
+    setInterval(refreshData, 600000);
   }
 
   window.Stoker.controller = {
