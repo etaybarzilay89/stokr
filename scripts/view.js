@@ -178,7 +178,7 @@
           </div>
         </div>
         <div class="submit-container">
-          <button type="button" class="filter-submit">Apply</button>
+          <button type="submit" class="filter-submit">Apply</button>
         </div>
       </form>
     </section>
@@ -256,7 +256,7 @@
     if (!target.classList.contains("filter-submit")) {
       return;
     }
-
+    e.preventDefault();
     const filteredFields= {
       'name' : currentTarget.querySelector('#by-name-id').value,
       'gain' : currentTarget.querySelector('#by-gain-id').value,
