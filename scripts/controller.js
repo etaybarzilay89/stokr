@@ -27,36 +27,38 @@
 
   function removeStock(stockSymbol) {
     let stockIndex = state.data.findIndex(stock => stock.Symbol === stockSymbol);
-    state.data.splice(stockIndex, 1);
-    state.requestedStocks.splice(stockIndex, 1);
+    let requestedStocksArray = state.ui.requestedStocks.slice();
+    requestedStocksArray.splice(stockIndex,1);
+    updateUIStateProperty('requestedStocks', requestedStocksArray);
     refreshData();
   }
 
   function shiftStocks(stockSymbol, direction) {
     let stocksIndexes = findSwitchedStocksIndexes(stockSymbol, direction, state.data);
+    let requestedStocksArray = state.ui.requestedStocks.slice();
     shiftStocksInArray(state.data, stocksIndexes.current, stocksIndexes.switch);
-    shiftStocksInArray(state.requestedStocks, stocksIndexes.current, stocksIndexes.switch);
+    shiftStocksInArray(requestedStocksArray, stocksIndexes.current, stocksIndexes.switch);
+    let newState = updateUIStateProperty('requestedStocks', requestedStocksArray);
 
-    view.renderHtmlPage(model.getState());
+    view.renderHtmlPage(newState);
   }
 
   function toggleChange() {
-    state.ui.change = (state.ui.change + 1) % changePresentationEnum.length;
-
-    view.renderHtmlPage(model.getState());
+    let newState = updateUIStateProperty('change', (state.ui.change + 1) % changePresentationEnum.length);
+    view.renderHtmlPage(newState);
   }
 
   function updateScreen(screenId) {
-    state.ui.screen = screenId;
+    let newState = updateUIStateProperty('screen', screenId);
     initializeData();
 
-    view.renderHtmlPage(model.getState());
+    view.renderHtmlPage(newState);
   }
 
   function refreshData() {
     const state = model.getState();
 
-    fetchStocks(state.requestedStocks)
+    fetchStocks(state.ui.requestedStocks)
       .then(updateData)
       .then(() => view.renderHtmlPage(state));
   }
@@ -68,7 +70,7 @@
     const to = parseFloat(filteredFields['to']);
 
     if (!(name || gain !== 'all' || from || to)) {
-      state.filteredData = state.stocks;
+      return state.data;
     }
 
     const percentChange = stock => parseFloat(stock.realtime_chg_percent);
@@ -80,13 +82,29 @@
     const fromPredicate = stock => (!from && from !== 0 || percentChange(stock) >= from);
     const toPredicate = stock => (!to && to !== 0 || percentChange(stock) < to);
 
-
-    state.filteredData = state.data.filter(stock => namePredicate(stock) && gainPredicate(stock) && fromPredicate(stock) && toPredicate(stock));
     updateFilterInputs(name, gain, from, to);
-    view.renderHtmlPage(model.getState());
+    return state.data.filter(stock => namePredicate(stock) && gainPredicate(stock) && fromPredicate(stock) && toPredicate(stock));
+  }
+
+  function updateUIStateProperty(key, value) {
+    const state = model.getState();
+
+    if (state.ui[key] !== value) {
+      state.ui[key] = value;
+      localStorage.ui = JSON.stringify(state.ui);
+    }
+
+    return state;
   }
 
   // private
+
+  function syncWithLocalStorage(state) {
+    if (localStorage.ui) {
+      state.ui = JSON.parse(localStorage.ui);
+    }
+    return state;
+  }
 
   function findSwitchedStocksIndexes(stockSymbol, direction, stocks) {
     let currentStockIndex = stocks.findIndex(stock => stock.Symbol === stockSymbol);
@@ -112,7 +130,7 @@
   function updateFilterInputs(name, gain, from, to) {
     let stringFrom = isNaN(from) ? '' : from;
     let stringTo = isNaN(to) ? '' : to;
-    state.ui.filter = {name: name, gain: gain, from: stringFrom, to: stringTo};
+    updateUIStateProperty('filter', {name: name, gain: gain, from: stringFrom, to: stringTo});
   }
 
   function fetchStocks(requestedStocks) {
@@ -128,12 +146,11 @@
 
   function initializeData() {
     state.data = model.getState().data;
-    state.filteredData = state.data;
-    updateFilterInputs('', '', '', '');
+    updateFilterInputs('', 'all', '', '');
   }
 
   function init() {
-    const state = model.getState();
+    const state = syncWithLocalStorage(model.getState());
     view.init(contentEnum, changePresentationEnum);
     model.init(contentEnum, changePresentationEnum);
 
@@ -153,7 +170,9 @@
     updateScreen,
     filterStocks,
     refreshData,
-    removeStock
+    removeStock,
+    updateUIStateProperty,
+    syncWithLocalStorage
   };
 
   init();

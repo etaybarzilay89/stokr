@@ -20,11 +20,13 @@
   }
 
   function renderStokrMainContent(state) {
+    const ctrl = window.Stoker.controller;
     let contentString = `<main class="main-content">`;
 
     if (isScreen(state.ui.screen, 'filter')) {
       contentString += `${renderFilter(state.ui.filter)}`;
-      contentString += `${renderStocks(state.filteredData, state.ui.change, state.ui.screen)}`;
+      contentString += `${renderStocks(ctrl.filterStocks(state.ui.filter), state.ui.change, state.ui.screen)}`;
+
     } else {
       contentString += `${renderStocks(state.data, state.ui.change, state.ui.screen)}`;
     }
@@ -235,7 +237,8 @@
       'to' : currentTarget.querySelector('#by-range-to-id').value
     };
 
-    ctrl.filterStocks(filteredFields);
+    let newState = ctrl.updateUIStateProperty('filter', filteredFields);
+    renderHtmlPage(newState)
   }
 
   function handleHashChange() {
@@ -268,7 +271,6 @@
     rootElement.querySelector('.stock-list') &&  rootElement.querySelector('.stock-list').addEventListener('click', dispatchEvents);
     rootElement.querySelector('.app-header') && rootElement.querySelector('.app-header').addEventListener('click', dispatchHeaderEvents);
     rootElement.querySelector('.filter-section') && rootElement.querySelector('.filter-section').addEventListener('click', dispatchFilterEvents);
-    rootElement.querySelector('.search-header') && rootElement.querySelector('.search-header').addEventListener('', dispatchFilterEvents);
   }
 
   window.Stoker.view = {

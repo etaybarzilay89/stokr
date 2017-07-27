@@ -5,16 +5,15 @@
 (function () {
 
   let stocks = [];
-  let requestedStocks = ['GOOG','WIX','MSFT'];
   let content = {};
   let changePresentation = {};
-  let filteredStocks = stocks;
 
   window.Stoker = window.Stoker || {};
   let state = {
     ui: {
-      screen: content.stocks,
-      change: changePresentation.percentage,
+      screen: 1,
+      change: 0,
+      requestedStocks : ['GOOG','WIX','MSFT'],
       filter: {
         'name' : '',
         'gain' : 'all',
@@ -22,9 +21,7 @@
         'to' : ''
       }
     },
-    data: stocks,
-    requestedStocks : requestedStocks,
-    filteredData: filteredStocks
+    data: stocks
   };
 
   // public
@@ -36,9 +33,6 @@
   function init(screensEnum, changeEnum) {
     content = screensEnum;
     changePresentation = changeEnum;
-    state.ui.change = changePresentation.percentage;
-    state.ui.screen = content.stocks;
-    state.filteredData = state.data;
   }
 
   window.Stoker.model = {
