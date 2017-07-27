@@ -13,7 +13,7 @@
 
   function renderMainContent(state) {
     if (isScreen(state.ui.screen, 'search')) {
-      return renderSearchMainContent();
+      return renderSearchMainContent(state);
     }
 
     return renderStokrMainContent(state);
@@ -35,15 +35,24 @@
     return contentString;
   }
 
-  function renderSearchMainContent() {
-    return `
-      <main class="search-main-content">
-        <div class="search-results">
-          <div class="icon-search-place-holder">
-          <h3>Search</h3>
+  function renderSearchMainContent(state) {
+    let contentString = `<main class="search-main-content">`;
+
+    if (state.ui.searchResults.length > 0) {
+      contentString += `${renderStocks(state.ui.searchResults, state.ui.change, state.ui.screen)}`;
+    } else {
+      contentString += `
+      <div class="search-results">
+        <div class="icon-search-place-holder">
+        <h3>${state.ui.searchField === '' ? 'Search' : 'Not Found'}</h3>
         </div>
-      </main>
-    `;
+      </div>  
+      `;
+    }
+
+    contentString += `</main>`;
+    return contentString;
+
   }
 
   function renderHeader(screenId) {
@@ -90,35 +99,51 @@
   }
 
   function renderStock(stock, index, stocks, changePresentation, screenId) {
+    const isSearch = isScreen(screenId, 'search');
+    return `
+      <li>
+        <div class="stock-naming-data">
+          ${renderEdit(screenId, stock.Symbol)}
+          <span class="stock-symbol">${isSearch? stock.symbol : stock.Symbol}</span>
+          <span class="stock-name">(${isSearch? stock.name : stock.Name})</span>
+        </div>
+        ${isSearch ? renderAddStock(stock.symbol) : renderStocksNumbers(stock, index, stocks,changePresentation,screenId)}
+      </li>
+    `;
+  }
+
+  function renderAddStock(stockSymbol) {
+    return `
+      <div class="add-stock-div">
+        <button data-symbol="${stockSymbol}" type="button" class="add-stock">+</button>
+      </div>
+    `;
+  }
+
+  function renderStocksNumbers(stock, index, stocks, changePresentation, screenId) {
     const change = getChangePresentation(stock, changePresentation);
     const lastTradePriceTrunced = Math.trunc(stock.realtime_price * 100) / 100;
     const changeState = parseFloat(change) >= 0 ? 'increase' : 'decrease';
     const upDisabled = index === 0 ? 'disabled' : '';
     const bottomDisabled = index === stocks.length - 1 ? 'disabled' : '';
     const hide = isScreen(screenId, 'filter') ? 'hide' : '';
+
     return `
-      <li>
-        <div class="stock-naming-data">
-          ${renderEdit(screenId, stock.Symbol)}
-          <span class="stock-symbol">${stock.Symbol}</span>
-          <span class="stock-name">(${stock.Name})</span>
+      <div class="stock-numbers">
+        <span class="current-price">${lastTradePriceTrunced}</span>
+        <button class="daily-change ${changeState}">${change}</button>
+        <div class="up-down ${hide}">
+          <button data-symbol="${stock.Symbol}" class="icon-arrow ${upDisabled}" ${upDisabled}></button>
+          <button data-symbol="${stock.Symbol}" class="icon-arrow icon-reverse ${bottomDisabled}" ${bottomDisabled}></button>
         </div>
-        <div class="stock-numbers">
-          <span class="current-price">${lastTradePriceTrunced}</span>
-          <button class="daily-change ${changeState}">${change}</button>
-          <div class="up-down ${hide}">
-            <button data-symbol="${stock.Symbol}" class="icon-arrow ${upDisabled}" ${upDisabled}></button>
-            <button data-symbol="${stock.Symbol}" class="icon-arrow icon-reverse ${bottomDisabled}" ${bottomDisabled}></button>
-          </div>
-        </div>
-      </li>
+      </div>    
     `;
   }
 
   function renderEdit(screenId, stockSymbol) {
     return !isScreen(screenId, 'settings') ? '' : `
     <div class="remove-stock" data-symbol="${stockSymbol}">
-      <div class="remove-stock-line"></div>
+      <div class="remove-stock-line" data-symbol="${stockSymbol}"></div>
     </div>
     `;
   }
@@ -203,6 +228,8 @@
       ctrl.shiftStocks(targetDataSymbol, 'up');
     } else if (target.classList.contains('remove-stock')) {
       ctrl.removeStock(targetDataSymbol);
+    } else if (target.classList.contains('add-stock')) {
+      ctrl.addStock(targetDataSymbol);
     }
   }
 
@@ -241,12 +268,29 @@
     renderHtmlPage(newState)
   }
 
+  function dispatchSearchEvents(e) {
+    if (e.keyCode !== 13) {
+      return;
+    }
+
+    const  ctrl = window.Stoker.controller;
+    const searchFieldValue = e.currentTarget.querySelector('#search-stock').value;
+    ctrl.updateUIStateProperty('searchField', searchFieldValue);
+
+    ctrl.searchStocks(searchFieldValue)
+      .then(searchResults => ctrl.updateUIStateProperty('searchResults', searchResults))
+      .then(renderHtmlPage);
+  }
+
   function handleHashChange() {
     const ctrl = window.Stoker.controller;
     let screenId = content.stocks;
     let hashValue = getHashValue();
     if (hashValue) {
       screenId = content[hashValue];
+    } else {
+      ctrl.updateUIStateProperty('searchField', '');
+      ctrl.updateUIStateProperty('searchResults', []);
     }
 
     ctrl.updateScreen(screenId);
@@ -271,6 +315,7 @@
     rootElement.querySelector('.stock-list') &&  rootElement.querySelector('.stock-list').addEventListener('click', dispatchEvents);
     rootElement.querySelector('.app-header') && rootElement.querySelector('.app-header').addEventListener('click', dispatchHeaderEvents);
     rootElement.querySelector('.filter-section') && rootElement.querySelector('.filter-section').addEventListener('click', dispatchFilterEvents);
+    rootElement.querySelector('.search-header') && rootElement.querySelector('.search-header').addEventListener('keypress', dispatchSearchEvents);
   }
 
   window.Stoker.view = {

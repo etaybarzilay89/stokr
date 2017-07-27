@@ -62,9 +62,9 @@ body {
   justify-content: center;
 }
 
-.main-content .stock-naming-data {
+.stock-naming-data {
   font-family: Avenir;
-  font-size: 1.4em;
+  font-size: 23px;
   font-weight: 300;
   color: #59737c;
 }
@@ -116,11 +116,11 @@ body {
   align-items: center;
 
 }
-.main-content .stock-list .hide button {
+.stock-list .hide button {
   display: none;
 }
 
-.main-content .stock-list .remove-stock {
+.stock-list .remove-stock {
   width: 44px;
   height: 43px;
   background-color: #ff4f46;
@@ -250,6 +250,7 @@ input, select{
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .search-header #search-stock {
@@ -261,7 +262,7 @@ input, select{
 }
 .search-header #cancel-search {
   position: absolute;
-  top: 27px;
+  top: 31px;
   right: 21px;
   border-style: none;
   background-color: inherit;
@@ -297,6 +298,19 @@ input, select{
   font-family: HelveticaNeueW01-55Roman;
   text-align: center;
   color: #868686;
+}
+
+.add-stock-div .add-stock {
+  font-size: 1.5em;
+  font-weight: 300;
+  text-align: center;
+  color: #ffffff;
+  width: 2em;
+  height: 2em;
+  border: none;
+  border-radius: 10px;
+  background-color: #63da39;
+
 }
 
 

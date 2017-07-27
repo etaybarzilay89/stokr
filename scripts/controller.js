@@ -25,6 +25,13 @@
 
   // public
 
+  function addStock(stockSymbol) {
+    // let stockIndex = state.data.findIndex(stock => stock.Symbol === stockSymbol);
+    let requestedStocksArray = state.ui.requestedStocks.slice();
+    requestedStocksArray.push(stockSymbol);
+    updateUIStateProperty('requestedStocks', requestedStocksArray);
+    refreshData();
+  }
   function removeStock(stockSymbol) {
     let stockIndex = state.data.findIndex(stock => stock.Symbol === stockSymbol);
     let requestedStocksArray = state.ui.requestedStocks.slice();
@@ -49,8 +56,8 @@
   }
 
   function updateScreen(screenId) {
-    let newState = updateUIStateProperty('screen', screenId);
     initializeData();
+    let newState = updateUIStateProperty('screen', screenId);
 
     view.renderHtmlPage(newState);
   }
@@ -84,6 +91,13 @@
 
     updateFilterInputs(name, gain, from, to);
     return state.data.filter(stock => namePredicate(stock) && gainPredicate(stock) && fromPredicate(stock) && toPredicate(stock));
+  }
+
+  function searchStocks(searchFieldValue) {
+    return  fetch(`http://localhost:7000/search?q=${searchFieldValue}`)
+      .then(response => response.json())
+      .then(data => data.ResultSet.Result ? data.ResultSet.Result : [] )
+      .then(data => Array.isArray(data) ? data : [data]);
   }
 
   function updateUIStateProperty(key, value) {
@@ -138,7 +152,7 @@
     // return stocks = fetch("/stokr/mocks/stocks.json")
     //   .then(response => response.json());
 
-    return stocks = fetch(`http://localhost:7000/quotes?q=${requestedStocks}`)
+    return  fetch(`http://localhost:7000/quotes?q=${requestedStocks}`)
       .then(response => response.json())
       .then(data => data.query.results ? data.query.results.quote : [] )
       .then(data => Array.isArray(data) ? data : [data]);
@@ -172,7 +186,8 @@
     refreshData,
     removeStock,
     updateUIStateProperty,
-    syncWithLocalStorage
+    searchStocks,
+    addStock
   };
 
   init();

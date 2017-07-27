@@ -14,6 +14,8 @@
       screen: 1,
       change: 0,
       requestedStocks : ['GOOG','WIX','MSFT'],
+      searchField: '',
+      searchResults: [],
       filter: {
         'name' : '',
         'gain' : 'all',
