@@ -26,12 +26,17 @@
   // public
 
   function addStock(stockSymbol) {
-    // let stockIndex = state.data.findIndex(stock => stock.Symbol === stockSymbol);
     let requestedStocksArray = state.ui.requestedStocks.slice();
     requestedStocksArray.push(stockSymbol);
     updateUIStateProperty('requestedStocks', requestedStocksArray);
+
+    let searchResults = state.ui.searchResults.slice();
+    let searchResultsWithoutChosen = searchResults.filter(el => el.symbol !== stockSymbol);
+    updateUIStateProperty('searchResults', searchResultsWithoutChosen);
+
     refreshData();
   }
+
   function removeStock(stockSymbol) {
     let stockIndex = state.data.findIndex(stock => stock.Symbol === stockSymbol);
     let requestedStocksArray = state.ui.requestedStocks.slice();
@@ -168,11 +173,7 @@
     view.init(contentEnum, changePresentationEnum);
     model.init(contentEnum, changePresentationEnum);
 
-    if (view.getHashValue() === 'search') {
-      updateScreen(contentEnum.search);
-    }
-
-    view.renderHtmlPage(state);
+    view.getHashValue() === 'search' ? updateScreen(contentEnum.search) : view.renderHtmlPage(state);
 
     refreshData();
     setInterval(refreshData, 600000);
