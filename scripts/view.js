@@ -114,7 +114,7 @@
 
   function renderAddStock(stockSymbol) {
     return `
-      <div class="add-stock-div">
+      <div class="add-stock-div add-stock-move">
         <button data-symbol="${stockSymbol}" type="button" class="add-stock">+</button>
       </div>
     `;
@@ -229,6 +229,7 @@
     } else if (target.classList.contains('remove-stock')) {
       ctrl.removeStock(targetDataSymbol);
     } else if (target.classList.contains('add-stock')) {
+      e.target.parentNode.classList.add('add-stock-animate');
       ctrl.addStock(targetDataSymbol);
     }
   }

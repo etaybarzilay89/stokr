@@ -310,7 +310,15 @@ input, select{
   border: none;
   border-radius: 10px;
   background-color: #63da39;
+}
 
+.add-stock-div {
+  transform: translateX(0);
+  transition: all 1s;
+}
+
+.add-stock-div.add-stock-animate {
+  transform: translateX(-1000px);
 }
 
 
